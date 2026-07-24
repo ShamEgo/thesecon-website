@@ -7,6 +7,7 @@
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
 <style>
   :root{
     --purple:#3F248A;--purple-deep:#0E0A18;--purple-800:#4E31A2;--purple-700:#5C40B5;
@@ -115,6 +116,16 @@
   .ins h3{font-size:18px;font-weight:900;color:var(--head);line-height:1.25}
   .ins .more{margin-top:auto;font-size:12px;font-weight:700;color:var(--orange);letter-spacing:.05em}
   @media(max-width:900px){.igrid{grid-template-columns:1fr}}
+
+  /* insight card thumb overlays (pulled from each linked page's own animation) */
+  .thumb .tlabel{position:absolute;bottom:10px;left:12px;z-index:2;display:flex;align-items:center;gap:6px;font-size:9.5px;font-weight:800;letter-spacing:.08em;color:#CFC7EC;text-transform:uppercase;text-shadow:0 1px 4px rgba(0,0,0,.6)}
+  .thumb .tlabel .d{width:6px;height:6px;border-radius:50%;background:#8FE3B8;animation:ping 2s infinite}
+  .thumb .tstat{position:absolute;bottom:10px;right:12px;z-index:2;font-size:10px;font-weight:900;letter-spacing:.1em;text-shadow:0 1px 4px rgba(0,0,0,.6)}
+  .thumb svg.detmini{width:100%;height:100%;display:block}
+  @keyframes boxIn{from{opacity:0;transform:scale(.93)}to{opacity:1;transform:scale(1)}}
+  @keyframes scanSweep{0%{transform:translateY(0);opacity:0}12%{opacity:.85}88%{opacity:.85}100%{transform:translateY(240px);opacity:0}}
+  .detbox{transform-box:fill-box;transform-origin:center;animation:boxIn 2.2s ease-in-out infinite alternate}
+  .scanline{animation:scanSweep 2.4s ease-in-out infinite}
 
   /* brochure */
   .broch{padding:clamp(40px,5vw,64px) var(--pad);background:var(--purple);color:#fff;display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap}
@@ -278,9 +289,48 @@
     <a class="more">All insights →</a>
   </div>
   <div class="igrid">
-    <a class="ins" href="digital-twin-framework.html"><div class="thumb"><canvas class="mini"></canvas><span class="tag">Digital Twins</span></div><div class="b"><span class="date">JUN 2026 · FRAMEWORK</span><h3>How to create a digital twin: the five foundations, in three dimensions</h3><span class="more">Read →</span></div></a>
-    <a class="ins" href="sensor-health-monitoring.html"><div class="thumb"><canvas class="mini"></canvas><span class="tag">Sensors / IoT</span></div><div class="b"><span class="date">MAY 2026 · WHITE PAPER</span><h3>Using sensors for health monitoring of infrastructure assets</h3><span class="more">Read →</span></div></a>
-    <a class="ins" href="ai-ml-capabilities.html"><div class="thumb"><canvas class="mini"></canvas><span class="tag">AI / ML</span></div><div class="b"><span class="date">JUN 2026 · CAPABILITY BRIEF</span><h3>What AI and machine learning actually do for infrastructure assets</h3><span class="more">Read →</span></div></a>
+    <a class="ins" href="digital-twin-framework.html"><div class="thumb"><canvas id="thumbTwin"></canvas><div class="tlabel"><span class="d"></span>Multiple connected units</div><span class="tag">Digital Twins</span></div><div class="b"><span class="date">JUN 2026 · FRAMEWORK</span><h3>How to create a digital twin: the five foundations, in three dimensions</h3><span class="more">Read →</span></div></a>
+    <a class="ins" href="sensor-health-monitoring.html"><div class="thumb"><canvas id="thumbSensor"></canvas><div class="tlabel"><span class="d"></span>Live · Bridge 14 · Accelerometer</div><div class="tstat" style="color:#8FE3B8">NOMINAL</div><span class="tag">Sensors / IoT</span></div><div class="b"><span class="date">MAY 2026 · WHITE PAPER</span><h3>Using sensors for health monitoring of infrastructure assets</h3><span class="more">Read →</span></div></a>
+    <a class="ins" href="ai-ml-capabilities.html"><div class="thumb">
+      <svg class="detmini" viewBox="0 0 420 250" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Simulated inspection image of a concrete deck soffit with cracks, spalling and corrosion flagged by detection boxes">
+        <defs>
+          <linearGradient id="tconc" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2c2646"/><stop offset="1" stop-color="#191231"/></linearGradient>
+          <radialGradient id="trust" cx="0.5" cy="0.4" r="0.6"><stop offset="0" stop-color="#8a4a24" stop-opacity="0.7"/><stop offset="0.6" stop-color="#6e3418" stop-opacity="0.3"/><stop offset="1" stop-color="#6e3418" stop-opacity="0"/></radialGradient>
+          <linearGradient id="tspall" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#413a5c"/><stop offset="1" stop-color="#332d4c"/></linearGradient>
+          <linearGradient id="tsweep" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#8FE3B8" stop-opacity="0"/><stop offset="0.5" stop-color="#8FE3B8" stop-opacity="0.9"/><stop offset="1" stop-color="#8FE3B8" stop-opacity="0"/></linearGradient>
+          <pattern id="tspeck" width="26" height="26" patternUnits="userSpaceOnUse" patternTransform="rotate(8)"><circle cx="3" cy="4" r="0.8" fill="#fff" opacity="0.05"/><circle cx="16" cy="11" r="0.6" fill="#fff" opacity="0.04"/><circle cx="9" cy="20" r="0.9" fill="#000" opacity="0.10"/><circle cx="22" cy="22" r="0.5" fill="#fff" opacity="0.05"/></pattern>
+        </defs>
+        <rect x="0" y="0" width="420" height="250" fill="url(#tconc)"/>
+        <rect x="0" y="0" width="420" height="250" fill="url(#tspeck)"/>
+        <g stroke="#ffffff" stroke-opacity="0.045" stroke-width="1"><line x1="140" y1="0" x2="140" y2="250"/><line x1="285" y1="0" x2="285" y2="250"/><line x1="0" y1="96" x2="420" y2="96"/></g>
+        <line x1="285" y1="150" x2="405" y2="210" stroke="#000" stroke-opacity="0.22" stroke-width="6" stroke-linecap="round"/>
+        <ellipse cx="90" cy="188" rx="62" ry="40" fill="url(#trust)"/>
+        <path d="M70,150 L82,178 L74,205 L88,232" fill="none" stroke="#3a2a1c" stroke-opacity="0.65" stroke-width="2"/>
+        <g fill="none" stroke-linecap="round">
+          <path d="M92,44 L112,78 L104,108 L128,140 L120,170" stroke="#0d0a17" stroke-opacity="0.5" stroke-width="3.4"/>
+          <path d="M92,44 L112,78 L104,108 L128,140 L120,170" stroke="#b9b0d6" stroke-opacity="0.75" stroke-width="1.5"/>
+          <path d="M104,108 L86,124" stroke="#b9b0d6" stroke-opacity="0.55" stroke-width="1.1"/>
+        </g>
+        <path d="M300,52 L352,44 L378,70 L372,104 L338,116 L306,98 Z" fill="url(#tspall)" stroke="#544b73" stroke-width="1"/>
+        <path d="M300,52 L352,44 L378,70" fill="none" stroke="#6b6191" stroke-opacity="0.6" stroke-width="1"/>
+        <g fill="#5b5279"><circle cx="322" cy="72" r="3.1"/><circle cx="345" cy="86" r="2.3"/><circle cx="336" cy="63" r="1.8"/><circle cx="316" cy="90" r="1.6"/></g>
+        <rect class="scanline" x="0" y="0" width="420" height="3" fill="url(#tsweep)"/>
+        <g class="detbox" style="animation-delay:.15s">
+          <rect x="76" y="36" width="66" height="146" fill="#FA670F" fill-opacity="0.08" stroke="#FA670F" stroke-width="1.6"/>
+          <g stroke="#FA670F" stroke-width="2.4"><path d="M76,50 L76,36 L90,36" fill="none"/><path d="M128,182 L142,182 L142,168" fill="none"/></g>
+        </g>
+        <g class="detbox" style="animation-delay:.35s">
+          <rect x="292" y="38" width="94" height="86" fill="#FA670F" fill-opacity="0.08" stroke="#FA670F" stroke-width="1.6"/>
+          <g stroke="#FA670F" stroke-width="2.4"><path d="M292,52 L292,38 L306,38" fill="none"/><path d="M372,124 L386,124 L386,110" fill="none"/></g>
+        </g>
+        <g class="detbox" style="animation-delay:.55s">
+          <rect x="40" y="148" width="104" height="86" fill="#F5C542" fill-opacity="0.08" stroke="#F5C542" stroke-width="1.6"/>
+          <g stroke="#F5C542" stroke-width="2.4"><path d="M40,162 L40,148 L54,148" fill="none"/><path d="M130,234 L144,234 L144,220" fill="none"/></g>
+        </g>
+      </svg>
+      <div class="tlabel"><span class="d"></span>Vision model · Panel 07</div>
+      <div class="tstat" style="color:#FA670F">3 FLAGGED</div>
+      <span class="tag">AI / ML</span></div><div class="b"><span class="date">JUN 2026 · CAPABILITY BRIEF</span><h3>What AI and machine learning actually do for infrastructure assets</h3><span class="more">Read →</span></div></a>
   </div>
 </section>
 
@@ -370,7 +420,98 @@
       pulses=pulses.filter(p=>p.t<1);while(pulses.length<count)spawn();requestAnimationFrame(draw);}
     new ResizeObserver(size).observe(cv);size();draw();}
   makeGrid(document.getElementById('spotGrid'),{pulses:7});
-  document.querySelectorAll('.mini').forEach(c=>makeGrid(c,{pulses:4,spacing:120,cols:4,rows:3}));
+
+  // ---- insights card thumb: sensor signal chart (idle/nominal, pulled from the sensors page hero) ----
+  (function initThumbSensor(){
+    const c=document.getElementById('thumbSensor'); if(!c) return;
+    const ctx=c.getContext('2d'); const dpr=window.devicePixelRatio||1; let W=0,H=0;
+    function resize(){const r=c.getBoundingClientRect();W=r.width;H=r.height;c.width=W*dpr;c.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);}
+    resize(); window.addEventListener('resize',resize);
+    const N=160; const samples=new Array(N).fill(0); let t=0;
+    function draw(){
+      if(H===0) resize();
+      t+=0.045;
+      const center=H/2, bandHalf=H*0.16, amp=H*0.10;
+      const noise=(Math.random()-0.5)*H*0.02;
+      const y=center+Math.sin(t)*amp+Math.sin(t*2.3)*amp*0.35+noise;
+      samples.push(y); samples.shift();
+      ctx.clearRect(0,0,W,H);
+      ctx.fillStyle='rgba(143,227,184,0.09)'; ctx.fillRect(0,center-bandHalf,W,bandHalf*2);
+      ctx.strokeStyle='rgba(143,227,184,0.4)'; ctx.setLineDash([3,5]); ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(0,center); ctx.lineTo(W,center); ctx.stroke(); ctx.setLineDash([]);
+      ctx.strokeStyle='#8FE3B8'; ctx.lineWidth=1.6; ctx.beginPath();
+      for(let i=0;i<N;i++){const x=(i/(N-1))*W; if(i===0) ctx.moveTo(x,samples[i]); else ctx.lineTo(x,samples[i]);}
+      ctx.stroke();
+      ctx.fillStyle='#8FE3B8'; ctx.beginPath(); ctx.arc(W-2,samples[N-1],2.5,0,Math.PI*2); ctx.fill();
+      requestAnimationFrame(draw);
+    }
+    draw();
+  })();
+
+  // ---- insights card thumb: digital twin "multiple connected units" wireframe network ----
+  (function initThumbTwin(){
+    const canvas=document.getElementById('thumbTwin'); if(!canvas) return;
+    function waitThree(cb){ if(window.THREE){cb();return;} let n=0; const id=setInterval(()=>{ if(window.THREE){clearInterval(id);cb();} else if(++n>120){clearInterval(id);} },50); }
+    function asset3D(THREE,type,color){
+      const g=new THREE.Group(); const mat=new THREE.LineBasicMaterial({color});
+      const segs=[]; const push=(a,b)=>segs.push(a[0],a[1],a[2],b[0],b[1],b[2]);
+      const box=(cx,cy,cz,w,h,d)=>{const x0=cx-w/2,x1=cx+w/2,y0=cy,y1=cy+h,z0=cz-d/2,z1=cz+d/2;
+        const c=[[x0,y0,z0],[x1,y0,z0],[x1,y0,z1],[x0,y0,z1],[x0,y1,z0],[x1,y1,z0],[x1,y1,z1],[x0,y1,z1]];
+        [[0,1],[1,2],[2,3],[3,0],[4,5],[5,6],[6,7],[7,4],[0,4],[1,5],[2,6],[3,7]].forEach(e=>push(c[e[0]],c[e[1]]));};
+      const cyl=(cx,cy,cz,r,h,n)=>{let pt,pb;for(let k=0;k<=n;k++){const th=k/n*Math.PI*2,x=cx+Math.cos(th)*r,z=cz+Math.sin(th)*r,tp=[x,cy+h,z],bp=[x,cy,z];if(k>0){push(pt,tp);push(pb,bp);}if(k%3===0)push(bp,tp);pt=tp;pb=bp;}};
+      const dome=(cx,cy,cz,r)=>{for(let arc=0;arc<2;arc++){let prev;for(let k=0;k<=10;k++){const th=k/10*Math.PI,p=[cx+(arc?Math.cos(th)*r:0),cy+Math.sin(th)*r*0.6,cz+(arc?0:Math.cos(th)*r)];if(k>0)push(prev,p);prev=p;}}};
+      if(type==='building'){const w=1.3,d=1.3,H=3.8,x0=-w/2,x1=w/2,z0=-d/2,z1=d/2;box(0,0,0,w,H,d);
+        for(let f=1;f<9;f++){const y=H*f/9;push([x0,y,z0],[x1,y,z0]);push([x1,y,z0],[x1,y,z1]);push([x1,y,z1],[x0,y,z1]);push([x0,y,z1],[x0,y,z0]);}
+        box(0,H,0,0.7,0.55,0.7); push([0,H+0.55,0],[0,H+1.3,0]);
+      } else if(type==='bridge'){const L=2.6,wd=0.55,dZ=1.0,tt=0.2,tH=2.0;box(0,dZ-tt,0,2*L,tt,2*wd);
+        [-wd,wd].forEach(sy=>push([-L,dZ+0.15,sy],[L,dZ+0.15,sy]));
+        [-1.0,1.0].forEach(tx=>{const topY=dZ+tH;push([tx,dZ,-wd],[tx,topY,0]);push([tx,dZ,wd],[tx,topY,0]);push([tx,dZ,0],[tx,topY,0]);
+          [0.7,1.4,2.1].forEach(dx=>{push([tx,topY,0],[tx-dx,dZ,0]);push([tx,topY,0],[tx+dx,dZ,0]);});push([tx,dZ-tt,-wd],[tx,0,-wd]);push([tx,dZ-tt,wd],[tx,0,wd]);});
+        push([-L,dZ-tt,0],[-L-0.7,0,0]); push([L,dZ-tt,0],[L+0.7,0,0]);
+      } else if(type==='pump'){const w=1.4,d=1.1,H=1.1,rH=H+0.7;box(0,0,0,w,H,d);push([-w/2,rH,0],[w/2,rH,0]);
+        [-w/2,w/2].forEach(x=>{push([x,H,-d/2],[x,rH,0]);push([x,H,d/2],[x,rH,0]);});
+        cyl(1.9,0,0,0.8,2.2,18); dome(1.9,2.2,0,0.8); push([w/2,H*0.5,0],[1.1,1.1,0]);
+      }
+      const geo=new THREE.BufferGeometry(); geo.setAttribute('position',new THREE.Float32BufferAttribute(segs,3));
+      g.add(new THREE.LineSegments(geo,mat)); return g;
+    }
+    function init(){
+      const THREE=window.THREE; const wrap=canvas.parentElement;
+      let W=wrap.clientWidth,H=wrap.clientHeight;
+      const scene=new THREE.Scene();
+      const camera=new THREE.PerspectiveCamera(40,W/H,0.1,200);
+      camera.position.set(0,5.6,10.5); camera.lookAt(0,0.8,0);
+      const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true,preserveDrawingBuffer:true});
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2)); renderer.setSize(W,H,false);
+      const root=new THREE.Group(); scene.add(root);
+      const COL={building:0xFA670F,bridge:0x38E7C4,pump:0xB48CF0};
+      const items=[
+        {type:'bridge',x:-3.8,z:-2.6},{type:'building',x:0.2,z:-3.8},{type:'pump',x:4.0,z:-2.2},
+        {type:'building',x:-4.2,z:1.2},{type:'bridge',x:0.8,z:1.6},{type:'building',x:4.2,z:1.8},{type:'pump',x:-1.2,z:4.2}
+      ];
+      const sf=0.6; const pulses=[];
+      items.forEach(it=>{const a=asset3D(THREE,it.type,COL[it.type]);a.position.set(it.x*sf,0,it.z*sf);a.scale.setScalar(sf);root.add(a);});
+      for(let i=0;i<items.length;i++) for(let j=i+1;j<items.length;j++){
+        const dx=items[i].x-items[j].x,dz=items[i].z-items[j].z;
+        if(Math.hypot(dx,dz)*sf<5.4){
+          const A=new THREE.Vector3(items[i].x*sf,0.9,items[i].z*sf), B=new THREE.Vector3(items[j].x*sf,0.9,items[j].z*sf);
+          root.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints([A,B]),new THREE.LineBasicMaterial({color:0x38E7C4,transparent:true,opacity:0.45})));
+          const pl=new THREE.Mesh(new THREE.SphereGeometry(0.1,8,8),new THREE.MeshBasicMaterial({color:0x38E7C4}));
+          root.add(pl); pulses.push({mesh:pl,a:A,b:B,off:Math.random()});
+        }
+      }
+      function resize(){W=wrap.clientWidth;H=wrap.clientHeight;camera.aspect=W/H;camera.updateProjectionMatrix();renderer.setSize(W,H,false);}
+      window.addEventListener('resize',resize);
+      let rotY=0.4,tt=0;
+      function animate(){
+        tt+=0.02; rotY+=0.003; root.rotation.y=rotY;
+        pulses.forEach(p=>{const u=(tt*0.14+p.off)%1; p.mesh.position.lerpVectors(p.a,p.b,u);});
+        renderer.render(scene,camera); requestAnimationFrame(animate);
+      }
+      renderer.render(scene,camera); animate();
+    }
+    waitThree(init);
+  })();
 </script>
 </body>
 </html>
